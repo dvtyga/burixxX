@@ -19,6 +19,13 @@ function updateAll() {
 
 function moveAll() {
   ballX += ballSpeedX;
+
+  if (ballX < 0) {
+    ballSpeedX *= -1; // just flipping the sign
+  }
+  if (ballX > canvas.width) {
+    ballSpeedX *= -1; 
+  }
 }
 
 function drawAll() {
