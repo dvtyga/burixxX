@@ -4,7 +4,8 @@ var ballSpeedX = 5;
 var ballSpeedY = 7;
 
 const PADDLE_WIDTH = 100;
-const PADDLE_THICKNESS = 10;
+const PADDLE_THICKNESS = 20;
+const PADDLE_DISTANCE_FROM_EDGE = 60;
 var paddleX = 400;
 
 var canvas, canvasContext;
@@ -36,29 +37,47 @@ function updateAll() {
   moveAll();
 }
 
+function ballReset() {
+  ballX = canvas.width / 2;
+  ballY = canvas.height / 2;
+}
+
 function moveAll() {
   ballX += ballSpeedX;
   ballY += ballSpeedY;
 
-  if (ballX < 0) {
-    ballSpeedX *= -1; // just flipping the sign
+  if (ballX < 0) {  // left
+    ballSpeedX *= -1; 
   }
-  if (ballX > canvas.width) {
+  if (ballX > canvas.width) {  // right
     ballSpeedX *= -1; 
   }
 
-  if (ballY < 0) {
+  if (ballY < 0) { // top
     ballSpeedY *= -1; 
   }
-  if (ballY > canvas.height) {
+  if (ballY > canvas.height) { // bottom
+    ballReset();
     ballSpeedY *= -1; 
   }
+
+  // collision detection on paddle
+  var paddleTopEdgeY = canvas.height - PADDLE_DISTANCE_FROM_EDGE;
+  var paddleBottomEdgeY = paddleTopEdgeY + PADDLE_THICKNESS;
+  var paddleLeftEdgeX = paddleX;
+  var paddleRightEdgeX = paddleLeftEdgeX + PADDLE_WIDTH;
+  if (ballY > paddleTopEdgeY &&     // below top of paddle
+      ballY < paddleBottomEdgeY &&  // above bottom of paddle
+      ballX > paddleLeftEdgeX &&    // right of the left side of paddle 
+      ballX < paddleRightEdgeX) {   // left of the right side of paddle
+        ballSpeedY *= -1;
+      }
 }
 
 function drawAll() {
   colorRect(0,0, canvas.width, canvas.height, 'black'); 
   colorCircle(ballX, ballY, 10, 'cyan'); 
-  colorRect(paddleX,canvas.height-PADDLE_THICKNESS, PADDLE_WIDTH, PADDLE_THICKNESS, 'cyan');
+  colorRect(paddleX,canvas.height-PADDLE_DISTANCE_FROM_EDGE, PADDLE_WIDTH, PADDLE_THICKNESS, 'cyan');
 }
 
 function colorRect(topLeftX, topLeftY, boxWidth, boxHeight, fillColor) {
