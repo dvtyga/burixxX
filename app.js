@@ -1,5 +1,7 @@
 var ballX = 75;
-var ballSpeedX = 10;
+var ballY = 75;
+var ballSpeedX = 5;
+var ballSpeedY = 7;
 
 var canvas, canvasContext;
 
@@ -19,6 +21,7 @@ function updateAll() {
 
 function moveAll() {
   ballX += ballSpeedX;
+  ballY += ballSpeedY;
 
   if (ballX < 0) {
     ballSpeedX *= -1; // just flipping the sign
@@ -26,11 +29,18 @@ function moveAll() {
   if (ballX > canvas.width) {
     ballSpeedX *= -1; 
   }
+
+  if (ballY < 0) {
+    ballSpeedY *= -1; 
+  }
+  if (ballY > canvas.height) {
+    ballSpeedY *= -1; 
+  }
 }
 
 function drawAll() {
   colorRect(0,0, canvas.width, canvas.height, 'black'); 
-  colorCircle(ballX, 200, 10, 'cyan'); 
+  colorCircle(ballX, ballY, 10, 'cyan'); 
 }
 
 function colorRect(topLeftX, topLeftY, boxWidth, boxHeight, fillColor) {
