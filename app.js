@@ -10,6 +10,7 @@ var paddleX = 400;
 
 var canvas, canvasContext;
 
+var mouseX, mouseY;
 
 window.onload = function() {
   canvas = this.document.getElementById('gameCanvas');
@@ -25,8 +26,8 @@ function updateMousePosition(event) {
   var rect = canvas.getBoundingClientRect();
   var root = document.documentElement;
 
-  var mouseX = event.clientX - rect.left - root.scrollLeft;
-  // var mouseY = event.clientY - rect.top - root.scrollTop;
+  mouseX = event.clientX - rect.left - root.scrollLeft;
+  mouseY = event.clientY - rect.top - root.scrollTop;
 
   paddleX = mouseX - PADDLE_WIDTH/2;  // subtract half of paddle's width to center mouse pointer 
   // paddleX = mouseX;
@@ -70,14 +71,21 @@ function moveAll() {
       ballY < paddleBottomEdgeY &&  // above bottom of paddle
       ballX > paddleLeftEdgeX &&    // right of the left side of paddle 
       ballX < paddleRightEdgeX) {   // left of the right side of paddle
+        
         ballSpeedY *= -1;
+
+        var centerOfPaddleX =  paddleX + PADDLE_WIDTH / 2;
+        var ballDistFromPaddleCenterX = ballX - centerOfPaddleX;
+        ballSpeedX = ballDistFromPaddleCenterX * 0.35;
       }
 }
 
 function drawAll() {
   colorRect(0,0, canvas.width, canvas.height, 'black'); 
-  colorCircle(ballX, ballY, 10, 'cyan'); 
-  colorRect(paddleX,canvas.height-PADDLE_DISTANCE_FROM_EDGE, PADDLE_WIDTH, PADDLE_THICKNESS, 'cyan');
+  colorCircle(ballX, ballY, 10, '#e7e7e7'); 
+  colorRect(paddleX,canvas.height-PADDLE_DISTANCE_FROM_EDGE, PADDLE_WIDTH, PADDLE_THICKNESS, '#e7e7e7');
+
+  colorText(`${mouseX}, ${mouseY}`, mouseX, mouseY, 'yellow');
 }
 
 function colorRect(topLeftX, topLeftY, boxWidth, boxHeight, fillColor) {
@@ -90,4 +98,9 @@ function colorCircle(centerX, centerY, radius, fillColor) {
   canvasContext.beginPath();
   canvasContext.arc(centerX,centerY, radius, 0,Math.PI*2, true);
   canvasContext.fill();
+}
+
+function colorText(displayWords, textX,textY, fillColor) {
+  canvasContext.fillStyle = fillColor;
+  canvasContext.fillText(displayWords, textX,textY);
 }

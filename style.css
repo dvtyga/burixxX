@@ -2,3 +2,12 @@
   margin: 0;
   padding: 0;
 }
+
+body {
+  background: #333;
+}
+
+.container {
+width: 800px;
+margin: 0 auto;
+}
