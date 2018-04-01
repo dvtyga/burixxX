@@ -1,4 +1,5 @@
 var ballX = 75;
+var ballSpeedX = 10;
 
 var canvas, canvasContext;
 
@@ -13,8 +14,12 @@ window.onload = function() {
 
 function updateAll() {
   drawAll();
+  moveAll();
 }
 
+function moveAll() {
+  ballX += ballSpeedX;
+}
 
 function drawAll() {
   colorRect(0,0, canvas.width, canvas.height, 'black'); 
