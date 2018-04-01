@@ -3,15 +3,17 @@ var ballY = 75;
 var ballSpeedX = 5;
 var ballSpeedY = 7;
 
-const BRICK_W = 100;
-const BRICK_H = 50;
-const BRICK_COUNT = 8;
+const BRICK_W = 80;
+const BRICK_H = 20;
+const BRICK_COLS = 10;
+const BRICK_ROWS = 10;
+const BRICK_GAP = 2;
 
 // var brick0 = true;
 // var brick1 = false;
 // var brick2 = true;
 // var brick3 = true;
-var brickGrid =  new Array(BRICK_COUNT);
+var brickGrid =  new Array(BRICK_COLS - BRICK_ROWS);
 
 const PADDLE_WIDTH = 100;
 const PADDLE_THICKNESS = 20;
@@ -23,9 +25,14 @@ var mouseX, mouseY;
 
 
 function brickReset() {
-  for (var i = 0; i < BRICK_COUNT; i++) {
-    brickGrid[i] = true;
+  for (var i = 0; i < BRICK_COLS * BRICK_ROWS; i++) {
+    if (Math.random() < 0.5) {
+      brickGrid[i] = true;
+    } else {
+      brickGrid[i] = false;
+    }
   }
+  // brickGrid[9] = false;
 }
 
 window.onload = function() {
@@ -38,8 +45,6 @@ window.onload = function() {
   canvas.addEventListener('mousemove', updateMousePosition);
 
   brickReset();
-
-
 }
 
 function updateMousePosition(event) {
@@ -101,11 +106,16 @@ function moveAll() {
 }
 
 function drawBricks() {
-  for (var i = 0; i < BRICK_COUNT; i++) {
-    if (brickGrid[i]) {
-      colorRect(BRICK_W*i+i+1,0, BRICK_W,BRICK_H, 'blue');
+  for (var row = 0; row < BRICK_ROWS; row++) {
+    for (var col = 0; col < BRICK_COLS; col++) {
+      var arrayIndex = BRICK_COLS * row + col;
+      if (brickGrid[arrayIndex]) {
+      // if (brickGrid[col]) {
+        colorRect(BRICK_W*col, BRICK_H*row, BRICK_W-BRICK_GAP, BRICK_H-BRICK_GAP, 'blue');
+      }
     }
   }
+
   // if (brickGrid[0]) {
   //     colorRect(BRICK_W*0+1,0, BRICK_W,BRICK_H, 'blue');
   // }
@@ -127,7 +137,10 @@ function drawAll() {
   colorCircle(ballX, ballY, 10, '#e7e7e7'); 
   colorRect(paddleX,canvas.height-PADDLE_DISTANCE_FROM_EDGE, PADDLE_WIDTH, PADDLE_THICKNESS, '#e7e7e7');
   drawBricks();
-  colorText(`${mouseX}, ${mouseY}`, mouseX, mouseY, 'yellow');
+  var mouseBrickCol = mouseX / BRICK_W; 
+  var mouseBrickRow = mouseY / BRICK_H; 
+  colorText(`${mouseBrickCol}, ${mouseBrickRow}`, mouseX, mouseY, 'yellow');
+  // colorText(`${mouseX}, ${mouseY}`, mouseX, mouseY, 'yellow');
 }
 
 function colorRect(topLeftX, topLeftY, boxWidth, boxHeight, fillColor) {
