@@ -3,6 +3,10 @@ var ballY = 75;
 var ballSpeedX = 5;
 var ballSpeedY = 7;
 
+const PADDLE_WIDTH = 100;
+const PADDLE_THICKNESS = 10;
+var paddleX = 400;
+
 var canvas, canvasContext;
 
 window.onload = function() {
@@ -41,6 +45,7 @@ function moveAll() {
 function drawAll() {
   colorRect(0,0, canvas.width, canvas.height, 'black'); 
   colorCircle(ballX, ballY, 10, 'cyan'); 
+  colorRect(paddleX,canvas.height-PADDLE_THICKNESS, PADDLE_WIDTH, PADDLE_THICKNESS, 'cyan');
 }
 
 function colorRect(topLeftX, topLeftY, boxWidth, boxHeight, fillColor) {
