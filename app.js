@@ -9,6 +9,7 @@ var paddleX = 400;
 
 var canvas, canvasContext;
 
+
 window.onload = function() {
   canvas = this.document.getElementById('gameCanvas');
   canvasContext = canvas.getContext('2d');
@@ -16,6 +17,18 @@ window.onload = function() {
   var framesPerSecond = 30;
   setInterval(updateAll, 1000/framesPerSecond); 
 
+  canvas.addEventListener('mousemove', updateMousePosition);
+}
+
+function updateMousePosition(event) {
+  var rect = canvas.getBoundingClientRect();
+  var root = document.documentElement;
+
+  var mouseX = event.clientX - rect.left - root.scrollLeft;
+  // var mouseY = event.clientY - rect.top - root.scrollTop;
+
+  paddleX = mouseX - PADDLE_WIDTH/2;  // subtract half of paddle's width to center mouse pointer 
+  // paddleX = mouseX;
 }
 
 function updateAll() {
