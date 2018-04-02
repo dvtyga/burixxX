@@ -88,6 +88,18 @@ function moveAll() {
     ballSpeedY *= -1; 
   }
 
+
+  var ballBrickCol = Math.floor(ballX / BRICK_W);
+  var ballBrickRow = Math.floor(ballY / BRICK_H);
+  var brickIndexUnderBall = rowColToArrayIndex(ballBrickCol, ballBrickRow);
+
+  if (ballBrickCol >= 0 && ballBrickCol < BRICK_COLS &&       
+      ballBrickRow >= 0 && ballBrickRow < BRICK_ROWS) {
+    brickGrid[brickIndexUnderBall] = false;
+  }
+ 
+  
+
   // collision detection on paddle
   var paddleTopEdgeY = canvas.height - PADDLE_DISTANCE_FROM_EDGE;
   var paddleBottomEdgeY = paddleTopEdgeY + PADDLE_THICKNESS;
@@ -141,16 +153,18 @@ function drawAll() {
   colorRect(0,0, canvas.width, canvas.height, 'black'); 
   colorCircle(ballX, ballY, 10, '#fff'); 
   colorRect(paddleX, canvas.height - PADDLE_DISTANCE_FROM_EDGE, PADDLE_WIDTH, PADDLE_THICKNESS, '#3dffb1');
-  drawBricks();
-  var mouseBrickCol = Math.floor(mouseX / BRICK_W);
-  var mouseBrickRow = Math.floor(mouseY / BRICK_H);
-  var brickIndexUnderMouse = rowColToArrayIndex(mouseBrickCol, mouseBrickRow);
-  colorText(`${mouseBrickCol}, ${mouseBrickRow} : ${brickIndexUnderMouse}`, mouseX, mouseY, 'blue');
-  // colorText(`${mouseX}, ${mouseY}`, mouseX, mouseY, 'yellow');
 
-  if (brickIndexUnderMouse >= 0 && brickIndexUnderMouse < BRICK_COLS * BRICK_ROWS) {
-    brickGrid[brickIndexUnderMouse] = false;
-  }
+  drawBricks();
+
+  // var mouseBrickCol = Math.floor(mouseX / BRICK_W);
+  // var mouseBrickRow = Math.floor(mouseY / BRICK_H);
+  // var brickIndexUnderMouse = rowColToArrayIndex(mouseBrickCol, mouseBrickRow);
+  // colorText(`${mouseBrickCol}, ${mouseBrickRow} : ${brickIndexUnderMouse}`, mouseX, mouseY, 'blue');
+  // // colorText(`${mouseX}, ${mouseY}`, mouseX, mouseY, 'yellow');
+
+  // if (brickIndexUnderMouse >= 0 && brickIndexUnderMouse < BRICK_COLS * BRICK_ROWS) {
+  //   brickGrid[brickIndexUnderMouse] = false;
+  // }
 }
 
 function colorRect(topLeftX, topLeftY, boxWidth, boxHeight, fillColor) {
