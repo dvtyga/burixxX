@@ -26,11 +26,11 @@ var mouseX, mouseY;
 
 function brickReset() {
   for (var i = 0; i < BRICK_COLS * BRICK_ROWS; i++) {
-    if (Math.random() < 0.5) {
+    // if (Math.random() < 0.5) {
       brickGrid[i] = true;
-    } else {
-      brickGrid[i] = false;
-    }
+    // } else {
+      // brickGrid[i] = false;
+    // }
   }
   // brickGrid[9] = false;
 }
@@ -45,6 +45,7 @@ window.onload = function() {
   canvas.addEventListener('mousemove', updateMousePosition);
 
   brickReset();
+  console.log(mouseX, mouseY);
 }
 
 function updateMousePosition(event) {
@@ -105,13 +106,17 @@ function moveAll() {
       }
 }
 
+function rowColToArrayIndex(col, row) {
+  return col + BRICK_COLS * row;
+}
+
 function drawBricks() {
   for (var row = 0; row < BRICK_ROWS; row++) {
     for (var col = 0; col < BRICK_COLS; col++) {
-      var arrayIndex = BRICK_COLS * row + col;
+      var arrayIndex = rowColToArrayIndex(col, row);
       if (brickGrid[arrayIndex]) {
       // if (brickGrid[col]) {
-        colorRect(BRICK_W*col, BRICK_H*row, BRICK_W-BRICK_GAP, BRICK_H-BRICK_GAP, 'blue');
+        colorRect(BRICK_W * col, BRICK_H * row, BRICK_W - BRICK_GAP, BRICK_H - BRICK_GAP, '#3dffb1');
       }
     }
   }
@@ -134,13 +139,18 @@ function drawBricks() {
 
 function drawAll() {
   colorRect(0,0, canvas.width, canvas.height, 'black'); 
-  colorCircle(ballX, ballY, 10, '#e7e7e7'); 
-  colorRect(paddleX,canvas.height-PADDLE_DISTANCE_FROM_EDGE, PADDLE_WIDTH, PADDLE_THICKNESS, '#e7e7e7');
+  colorCircle(ballX, ballY, 10, '#fff'); 
+  colorRect(paddleX, canvas.height - PADDLE_DISTANCE_FROM_EDGE, PADDLE_WIDTH, PADDLE_THICKNESS, '#3dffb1');
   drawBricks();
-  var mouseBrickCol = mouseX / BRICK_W; 
-  var mouseBrickRow = mouseY / BRICK_H; 
-  colorText(`${mouseBrickCol}, ${mouseBrickRow}`, mouseX, mouseY, 'yellow');
+  var mouseBrickCol = Math.floor(mouseX / BRICK_W);
+  var mouseBrickRow = Math.floor(mouseY / BRICK_H);
+  var brickIndexUnderMouse = rowColToArrayIndex(mouseBrickCol, mouseBrickRow);
+  colorText(`${mouseBrickCol}, ${mouseBrickRow} : ${brickIndexUnderMouse}`, mouseX, mouseY, 'blue');
   // colorText(`${mouseX}, ${mouseY}`, mouseX, mouseY, 'yellow');
+
+  if (brickIndexUnderMouse >= 0 && brickIndexUnderMouse < BRICK_COLS * BRICK_ROWS) {
+    brickGrid[brickIndexUnderMouse] = false;
+  }
 }
 
 function colorRect(topLeftX, topLeftY, boxWidth, boxHeight, fillColor) {
