@@ -4,9 +4,9 @@ var ballSpeedX = 5;
 var ballSpeedY = 7;
 
 const BRICK_W = 80;
-const BRICK_H = 20;
+const BRICK_H = 40;  // temporarily doubled
 const BRICK_COLS = 10;
-const BRICK_ROWS = 10;
+const BRICK_ROWS = 5;   // temporaitly halved
 const BRICK_GAP = 2;
 
 // var brick0 = true;
@@ -98,7 +98,19 @@ function ballBrickHandling() {
     ballBrickRow >= 0 && ballBrickRow < BRICK_ROWS) {
       if (brickGrid[brickIndexUnderBall]) {   // without this, ball will not know if there is a brick and will bounce back even if no brick. Because for the ball, there is a brick but it is just set to false.
       brickGrid[brickIndexUnderBall] = false;
-      ballSpeedY *= -1;
+
+      var prevBallX = ballX - ballSpeedX;
+      var prevBallY = ballY - ballSpeedY;
+      var prevBrickCol = Math.floor(prevBallX  / BRICK_W);
+      var prevBrickRow = Math.floor(prevBallY / BRICK_H);
+
+      if (prevBrickCol != ballBrickCol) {
+        ballSpeedX *= -1;
+      }
+      if (prevBrickRow != ballBrickRow) {
+        ballSpeedY *= -1;
+      }
+
     }  // end of brick found
   }  // end of valid col and row
 }  // end of ballBrickHandling func
