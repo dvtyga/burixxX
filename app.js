@@ -45,7 +45,7 @@ window.onload = function() {
   canvas.addEventListener('mousemove', updateMousePosition);
 
   brickReset();
-  console.log(mouseX, mouseY);
+  // ballReset();
 }
 
 function updateMousePosition(event) {
@@ -69,17 +69,17 @@ function ballReset() {
   ballY = canvas.height / 2;
 }
 
-function moveAll() {
+function ballMove() {
   ballX += ballSpeedX;
   ballY += ballSpeedY;
-
+  
   if (ballX < 0) {  // left
     ballSpeedX *= -1; 
   }
   if (ballX > canvas.width) {  // right
     ballSpeedX *= -1; 
   }
-
+  
   if (ballY < 0) { // top
     ballSpeedY *= -1; 
   }
@@ -87,19 +87,23 @@ function moveAll() {
     ballReset();
     ballSpeedY *= -1; 
   }
+}  
 
-
+function ballBrickHandling() {
   var ballBrickCol = Math.floor(ballX / BRICK_W);
   var ballBrickRow = Math.floor(ballY / BRICK_H);
   var brickIndexUnderBall = rowColToArrayIndex(ballBrickCol, ballBrickRow);
-
-  if (ballBrickCol >= 0 && ballBrickCol < BRICK_COLS &&       
-      ballBrickRow >= 0 && ballBrickRow < BRICK_ROWS) {
-    brickGrid[brickIndexUnderBall] = false;
-  }
- 
   
+  if (ballBrickCol >= 0 && ballBrickCol < BRICK_COLS &&       
+    ballBrickRow >= 0 && ballBrickRow < BRICK_ROWS) {
+      if (brickGrid[brickIndexUnderBall]) {   // without this, ball will not know if there is a brick and will bounce back even if no brick. Because for the ball, there is a brick but it is just set to false.
+      brickGrid[brickIndexUnderBall] = false;
+      ballSpeedY *= -1;
+    }  // end of brick found
+  }  // end of valid col and row
+}  // end of ballBrickHandling func
 
+function ballPaddleHandling() {
   // collision detection on paddle
   var paddleTopEdgeY = canvas.height - PADDLE_DISTANCE_FROM_EDGE;
   var paddleBottomEdgeY = paddleTopEdgeY + PADDLE_THICKNESS;
@@ -111,11 +115,20 @@ function moveAll() {
       ballX < paddleRightEdgeX) {   // left of the right side of paddle
         
         ballSpeedY *= -1;
-
+  
         var centerOfPaddleX =  paddleX + PADDLE_WIDTH / 2;
         var ballDistFromPaddleCenterX = ballX - centerOfPaddleX;
         ballSpeedX = ballDistFromPaddleCenterX * 0.35;
       }
+}
+
+function moveAll() {
+
+  ballMove();
+
+  ballBrickHandling();
+
+  ballPaddleHandling();
 }
 
 function rowColToArrayIndex(col, row) {
