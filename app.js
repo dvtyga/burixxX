@@ -46,7 +46,7 @@ window.onload = function() {
   canvas.addEventListener('mousemove', updateMousePosition);
 
   brickReset();
-  // ballReset();
+  ballReset();
 }
 
 function updateMousePosition(event) {
@@ -60,10 +60,12 @@ function updateMousePosition(event) {
   // paddleX = mouseX;
 
   // CHEAT / HACK TO TEST BALL IN ANY POSITION
+  /*
   ballX = mouseX;
   ballY = mouseY;
   ballSpeedX = 4;
   ballSpeedY = -4;
+  */
 }
 
 function updateAll() {
@@ -96,14 +98,26 @@ function ballMove() {
   }
 }  
 
+// fixing first row bouncing at the wrong direction Bug
+function isBrickAtColRow(col, row) {
+  if (col >= 0 && col < BRICK_COLS &&
+      row >= 0 && row < BRICK_ROWS) {
+        var brickIndexUnderCoord = rowColToArrayIndex(col, row);
+        return brickGrid[brickIndexUnderCoord];
+      } else {
+        return false;
+      }
+}
+
 function ballBrickHandling() {
   var ballBrickCol = Math.floor(ballX / BRICK_W);
   var ballBrickRow = Math.floor(ballY / BRICK_H);
   var brickIndexUnderBall = rowColToArrayIndex(ballBrickCol, ballBrickRow);
   
   if (ballBrickCol >= 0 && ballBrickCol < BRICK_COLS &&       
-    ballBrickRow >= 0 && ballBrickRow < BRICK_ROWS) {
-      if (brickGrid[brickIndexUnderBall]) {   // without this, ball will not know if there is a brick and will bounce back even if no brick. Because for the ball, there is a brick but it is just set to false.
+      ballBrickRow >= 0 && ballBrickRow < BRICK_ROWS) {
+      if (isBrickAtColRow(ballBrickCol, ballBrickRow)) {
+      // if (brickGrid[brickIndexUnderBall]) {   // without this, ball will not know if there is a brick and will bounce back even if no brick. Because for the ball, there is a brick but it is just set to false.
 
       brickGrid[brickIndexUnderBall] = false; // REMOVE brick
       bricksLeft--;
@@ -117,17 +131,21 @@ function ballBrickHandling() {
       var bothTestsFailed = true;
 
       if (prevBrickCol != ballBrickCol) {
-        var adjBrickSide = rowColToArrayIndex(prevBrickCol, ballBrickRow);
-
-        if (brickGrid[adjBrickSide] == false) {
+        if (isBrickAtColRow(prevBrickCol, prevBrickRow) == false) {
           ballSpeedX *= -1;
           bothTestsFailed = false;
         }
+        // var adjBrickSide = rowColToArrayIndex(prevBrickCol, ballBrickRow);
+
+        // if (brickGrid[adjBrickSide] == false) {
+        //   ballSpeedX *= -1;
+        //   bothTestsFailed = false;
+        // }
       }
       if (prevBrickRow != ballBrickRow) {
-        var adjBrickTopBot = rowColToArrayIndex(ballBrickCol, prevBrickRow);
-
-        if (brickGrid[adjBrickTopBot] == false) {
+        // var adjBrickTopBot = rowColToArrayIndex(ballBrickCol, prevBrickRow);
+        // if (brickGrid[adjBrickTopBot] == false) {
+        if (isBrickAtColRow(prevBrickCol, prevBrickRow) == false) {
           ballSpeedY *= -1;
           bothTestsFailed = false;
         }
@@ -158,8 +176,12 @@ function ballPaddleHandling() {
         var centerOfPaddleX =  paddleX + PADDLE_WIDTH / 2;
         var ballDistFromPaddleCenterX = ballX - centerOfPaddleX;
         ballSpeedX = ballDistFromPaddleCenterX * 0.35;
-      }
-}
+
+        if (bricksLeft === 0) {
+          brickReset();
+        }  // out of bricks
+   }  // ball center inside paddle
+}  //end of ballPaddleHandling
 
 function moveAll() {
 
