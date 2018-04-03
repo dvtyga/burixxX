@@ -4,9 +4,9 @@ var ballSpeedX = 5;
 var ballSpeedY = 7;
 
 const BRICK_W = 80;
-const BRICK_H = 40;  // temporarily doubled
+const BRICK_H = 20;
 const BRICK_COLS = 10;
-const BRICK_ROWS = 5;   // temporaitly halved
+const BRICK_ROWS = 10;
 const BRICK_GAP = 2;
 
 // var brick0 = true;
@@ -14,6 +14,7 @@ const BRICK_GAP = 2;
 // var brick2 = true;
 // var brick3 = true;
 var brickGrid =  new Array(BRICK_COLS - BRICK_ROWS);
+var bricksLeft = 0;
 
 const PADDLE_WIDTH = 100;
 const PADDLE_THICKNESS = 20;
@@ -25,14 +26,14 @@ var mouseX, mouseY;
 
 
 function brickReset() {
-  for (var i = 0; i < BRICK_COLS * BRICK_ROWS; i++) {
-    // if (Math.random() < 0.5) {
-      brickGrid[i] = true;
-    // } else {
-      // brickGrid[i] = false;
-    // }
+  bricksLeft = 0;
+  for (var i = 3; i < 3 * BRICK_COLS; i++) {
+      brickGrid[i] = false;
   }
-  // brickGrid[9] = false;
+  for (var i = 3 * BRICK_COLS; i < BRICK_COLS * BRICK_ROWS; i++) {
+    brickGrid[i] = true;
+    bricksLeft++;
+  }
 }
 
 window.onload = function() {
@@ -57,6 +58,12 @@ function updateMousePosition(event) {
 
   paddleX = mouseX - PADDLE_WIDTH/2;  // subtract half of paddle's width to center mouse pointer 
   // paddleX = mouseX;
+
+  // CHEAT / HACK TO TEST BALL IN ANY POSITION
+  ballX = mouseX;
+  ballY = mouseY;
+  ballSpeedX = 4;
+  ballSpeedY = -4;
 }
 
 function updateAll() {
@@ -97,17 +104,37 @@ function ballBrickHandling() {
   if (ballBrickCol >= 0 && ballBrickCol < BRICK_COLS &&       
     ballBrickRow >= 0 && ballBrickRow < BRICK_ROWS) {
       if (brickGrid[brickIndexUnderBall]) {   // without this, ball will not know if there is a brick and will bounce back even if no brick. Because for the ball, there is a brick but it is just set to false.
-      brickGrid[brickIndexUnderBall] = false;
+
+      brickGrid[brickIndexUnderBall] = false; // REMOVE brick
+      bricksLeft--;
+      console.log(bricksLeft);
 
       var prevBallX = ballX - ballSpeedX;
       var prevBallY = ballY - ballSpeedY;
-      var prevBrickCol = Math.floor(prevBallX  / BRICK_W);
       var prevBrickRow = Math.floor(prevBallY / BRICK_H);
+      var prevBrickCol = Math.floor(prevBallX  / BRICK_W);
+
+      var bothTestsFailed = true;
 
       if (prevBrickCol != ballBrickCol) {
-        ballSpeedX *= -1;
+        var adjBrickSide = rowColToArrayIndex(prevBrickCol, ballBrickRow);
+
+        if (brickGrid[adjBrickSide] == false) {
+          ballSpeedX *= -1;
+          bothTestsFailed = false;
+        }
       }
       if (prevBrickRow != ballBrickRow) {
+        var adjBrickTopBot = rowColToArrayIndex(ballBrickCol, prevBrickRow);
+
+        if (brickGrid[adjBrickTopBot] == false) {
+          ballSpeedY *= -1;
+          bothTestsFailed = false;
+        }
+      }
+
+      if (bothTestsFailed) {  // armpit case, prevents ball from going right through, making it bouncing off
+        ballSpeedX *= -1;
         ballSpeedY *= -1;
       }
 
