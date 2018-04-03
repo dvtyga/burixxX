@@ -6,7 +6,7 @@ var ballSpeedY = 7;
 const BRICK_W = 80;
 const BRICK_H = 20;
 const BRICK_COLS = 10;
-const BRICK_ROWS = 10;
+const BRICK_ROWS = 7;
 const BRICK_GAP = 2;
 
 // var brick0 = true;
@@ -82,14 +82,14 @@ function ballMove() {
   ballX += ballSpeedX;
   ballY += ballSpeedY;
   
-  if (ballX < 0) {  // left
+  if (ballX < 0 && ballSpeedX < 0.0) {  // left
     ballSpeedX *= -1; 
   }
-  if (ballX > canvas.width) {  // right
+  if (ballX > canvas.width && ballSpeedX > 0.0) {  // right
     ballSpeedX *= -1; 
   }
   
-  if (ballY < 0) { // top
+  if (ballY < 0 && ballSpeedY < 0.0) { // top
     ballSpeedY *= -1; 
   }
   if (ballY > canvas.height) { // bottom
