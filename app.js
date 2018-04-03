@@ -1,12 +1,12 @@
 var ballX = 75;
 var ballY = 75;
-var ballSpeedX = 5;
-var ballSpeedY = 7;
+var ballSpeedX = 10;
+var ballSpeedY = 10;
 
 const BRICK_W = 80;
 const BRICK_H = 20;
 const BRICK_COLS = 10;
-const BRICK_ROWS = 7;
+const BRICK_ROWS = 10;
 const BRICK_GAP = 2;
 
 // var brick0 = true;
@@ -41,7 +41,7 @@ window.onload = function() {
   canvasContext = canvas.getContext('2d');
 
   var framesPerSecond = 30;
-  setInterval(updateAll, 1000/framesPerSecond); 
+  setInterval(updateAll, 950/framesPerSecond); 
 
   canvas.addEventListener('mousemove', updateMousePosition);
 
@@ -175,7 +175,7 @@ function ballPaddleHandling() {
   
         var centerOfPaddleX =  paddleX + PADDLE_WIDTH / 2;
         var ballDistFromPaddleCenterX = ballX - centerOfPaddleX;
-        ballSpeedX = ballDistFromPaddleCenterX * 0.35;
+        ballSpeedX = ballDistFromPaddleCenterX * 0.40;
 
         if (bricksLeft === 0) {
           brickReset();
